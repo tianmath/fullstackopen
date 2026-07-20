@@ -35,13 +35,8 @@ const App = () => {
     updatedVotes[selected] += 1;
     setVotes(updatedVotes);
 
-    const mostVotedIndex = updatedVotes.reduce(
-      (mostIndex, curAnectVote, curAnectIndex, anectsVotes) =>
-        curAnectVote > anectsVotes[mostIndex] ? curAnectIndex : mostIndex,
-      mostVoted,
-    );
-
-    setMostVoted(mostVotedIndex);
+    if (updatedVotes[selected] > updatedVotes[mostVoted])
+      setMostVoted(selected);
   };
 
   return (
