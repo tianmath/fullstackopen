@@ -16,11 +16,22 @@ const Content = ({ parts }) => {
   );
 };
 
+const Total = ({ parts }) => {
+  return (
+    <h3>
+      {`total of ${parts
+        .map((part) => part.exercises)
+        .reduce((acc, currentExercise) => acc + currentExercise, 0)} exercises`}
+    </h3>
+  );
+};
+
 const Course = ({ course }) => {
   return (
     <div>
       <Header course={course} />
       <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   );
 };
