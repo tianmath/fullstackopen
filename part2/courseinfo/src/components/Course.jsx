@@ -17,13 +17,12 @@ const Content = ({ parts }) => {
 };
 
 const Total = ({ parts }) => {
-  return (
-    <h3>
-      {`total of ${parts
-        .map((part) => part.exercises)
-        .reduce((acc, currentExercise) => acc + currentExercise, 0)} exercises`}
-    </h3>
+  const total = parts.reduce(
+    (total, currentPart) => total + currentPart.exercises,
+    0,
   );
+
+  return <h3>{`total of ${total} exercises`}</h3>;
 };
 
 const Course = ({ course }) => {
