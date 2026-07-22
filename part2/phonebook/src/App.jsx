@@ -52,10 +52,7 @@ const App = () => {
       <h2>Numbers</h2>
       <div>
         {persons.map((person) => (
-          <span key={person.name}>
-            {`${person.name} ${person.number}`}
-            <br />
-          </span>
+          <div key={person.name}>{`${person.name} ${person.number}`}</div>
         ))}
       </div>
     </div>
