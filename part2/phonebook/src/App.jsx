@@ -31,11 +31,25 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ personsToShow }) => {
+const Persons = ({ persons, setPersons, filter }) => {
+  const handleRemovePerson = (person) => {
+    if (window.confirm(`Delete ${person.name}?`)) {
+      phonebookService.remove(person.id);
+      setPersons(persons.filter((p) => p.id !== person.id));
+    }
+  };
+
+  const personsToShow = persons.filter((person) =>
+    person.name.includes(filter),
+  );
+
   return (
     <div>
       {personsToShow.map((person) => (
-        <div key={person.name}>{`${person.name} ${person.number}`}</div>
+        <div key={person.name}>
+          {`${person.name} ${person.number} `}
+          <button onClick={() => handleRemovePerson(person)}>delete</button>
+        </div>
       ))}
     </div>
   );
@@ -87,10 +101,6 @@ const App = () => {
     setFilter(e.target.value);
   };
 
-  const personsToShow = persons.filter((person) =>
-    person.name.includes(filter),
-  );
-
   return (
     <div>
       <h2>Phonebook</h2>
@@ -109,7 +119,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons personsToShow={personsToShow} />
+      <Persons persons={persons} setPersons={setPersons} filter={filter} />
     </div>
   );
 };
