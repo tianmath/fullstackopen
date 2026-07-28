@@ -19,6 +19,16 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": "4"
+    },
+    {
+      "name": "Mr Peabody",
+      "number": "111-1111111",
+      "id": "0Dend1Rk1ME"
+    },
+    {
+      "name": "Gail in Storm",
+      "number": "222-222222",
+      "id": "crBEk1QUWCM"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

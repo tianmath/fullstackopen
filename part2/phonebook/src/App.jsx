@@ -70,8 +70,29 @@ const App = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+    const personWithSameName = persons.find(
+      (person) => person.name === newName,
+    );
+    if (personWithSameName) {
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`,
+        )
+      ) {
+        phonebookService
+          .update(personWithSameName.id, {
+            ...personWithSameName,
+            number: newNumber,
+          })
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id === returnedPerson.id ? returnedPerson : person,
+              ),
+            );
+          });
+      }
+
       setNewName('');
       setNewNumber('');
       return;
