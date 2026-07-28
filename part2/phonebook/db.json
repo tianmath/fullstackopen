@@ -24,6 +24,11 @@
       "name": "Moine Botista",
       "number": "234-294872",
       "id": "eMztzxC--vI"
+    },
+    {
+      "name": "Gail in Storm",
+      "number": "27402-92734",
+      "id": "pWiZ0RqJ_mM"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
