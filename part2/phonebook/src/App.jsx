@@ -10,7 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     phonebookService.getAll().then((initialPersons) => {
@@ -41,10 +41,23 @@ const App = () => {
                 person.id === returnedPerson.id ? returnedPerson : person,
               ),
             );
-            setSuccessMessage(`Number for ${personWithSameName.name} changed`);
+            setMessage({
+              type: 'success',
+              text: `Number for ${personWithSameName.name} changed`,
+            });
             setTimeout(() => {
-              setSuccessMessage(null);
+              setMessage(null);
             }, 5000);
+          })
+          .catch((error) => {
+            setMessage({
+              type: 'error',
+              text: `Information of ${personWithSameName.name} was already removed from server`,
+            });
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+            setPersons(persons.filter((p) => p.id !== personWithSameName.id));
           });
       }
 
@@ -62,9 +75,9 @@ const App = () => {
       setPersons(persons.concat(returnedPerson));
       setNewName('');
       setNewNumber('');
-      setSuccessMessage(`Added ${newName}`);
+      setMessage({ type: 'success', text: `Added ${newName}` });
       setTimeout(() => {
-        setSuccessMessage(null);
+        setMessage(null);
       }, 5000);
     });
   };
@@ -92,7 +105,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      <Notification message={successMessage} />
+      <Notification message={message} />
 
       <Filter filter={filter} onFilterChange={handleFilterChange} />
 
