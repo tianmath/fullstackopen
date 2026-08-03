@@ -3,12 +3,14 @@ import phonebookService from './services/phonebook';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     phonebookService.getAll().then((initialPersons) => {
@@ -39,6 +41,10 @@ const App = () => {
                 person.id === returnedPerson.id ? returnedPerson : person,
               ),
             );
+            setSuccessMessage(`Number for ${personWithSameName.name} changed`);
+            setTimeout(() => {
+              setSuccessMessage(null);
+            }, 5000);
           });
       }
 
@@ -56,6 +62,10 @@ const App = () => {
       setPersons(persons.concat(returnedPerson));
       setNewName('');
       setNewNumber('');
+      setSuccessMessage(`Added ${newName}`);
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
     });
   };
 
@@ -81,6 +91,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={successMessage} />
 
       <Filter filter={filter} onFilterChange={handleFilterChange} />
 
