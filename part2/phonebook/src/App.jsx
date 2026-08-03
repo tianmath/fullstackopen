@@ -1,59 +1,8 @@
 import { useState, useEffect } from 'react';
 import phonebookService from './services/phonebook';
-
-const Filter = ({ filter, onFilterChange }) => {
-  return (
-    <div>
-      filter shown with <input value={filter} onChange={onFilterChange} />
-    </div>
-  );
-};
-
-const PersonForm = ({
-  onSubmit,
-  newName,
-  onNameChange,
-  newNumber,
-  onNumberChange,
-}) => {
-  return (
-    <form onSubmit={onSubmit}>
-      <div>
-        name: <input value={newName} onChange={onNameChange} />
-      </div>
-      <div>
-        number: <input value={newNumber} onChange={onNumberChange} />
-      </div>
-      <div>
-        <button type='submit'>add</button>
-      </div>
-    </form>
-  );
-};
-
-const Persons = ({ persons, setPersons, filter }) => {
-  const handleRemovePerson = (person) => {
-    if (window.confirm(`Delete ${person.name}?`)) {
-      phonebookService.remove(person.id);
-      setPersons(persons.filter((p) => p.id !== person.id));
-    }
-  };
-
-  const personsToShow = persons.filter((person) =>
-    person.name.includes(filter),
-  );
-
-  return (
-    <div>
-      {personsToShow.map((person) => (
-        <div key={person.name}>
-          {`${person.name} ${person.number} `}
-          <button onClick={() => handleRemovePerson(person)}>delete</button>
-        </div>
-      ))}
-    </div>
-  );
-};
+import Filter from './components/Filter';
+import PersonForm from './components/PersonForm';
+import Persons from './components/Persons';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -110,6 +59,13 @@ const App = () => {
     });
   };
 
+  const handleRemovePerson = (person) => {
+    if (window.confirm(`Delete ${person.name}?`)) {
+      phonebookService.remove(person.id);
+      setPersons(persons.filter((p) => p.id !== person.id));
+    }
+  };
+
   const handleNameChange = (e) => {
     setNewName(e.target.value);
   };
@@ -140,7 +96,11 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={persons} setPersons={setPersons} filter={filter} />
+      <Persons
+        persons={persons}
+        filter={filter}
+        onRemovePerson={handleRemovePerson}
+      />
     </div>
   );
 };
