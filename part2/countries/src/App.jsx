@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import countriesService from './services/countries';
+import DisplayCountryInfos from './components/DisplayCountryInfos';
 
 const MAX_NUM_COUNTRIES = 10;
 
-function App() {
+const App = () => {
   const [search, setSearch] = useState('');
-  const [allCountries, setAllCountries] = useState(null);
+  const [everyCountryName, setEveryCountryName] = useState(null);
 
   useEffect(() => {
-    axios
-      .get('https://studies.cs.helsinki.fi/restcountries/api/all')
-      .then((response) => {
-        setAllCountries(response.data.map((country) => country.name.common));
-      });
+    countriesService.getAllCountry().then((allCountries) => {
+      setEveryCountryName(allCountries.map((country) => country.name.common));
+    });
   }, []);
 
-  if (allCountries === null) return;
+  if (everyCountryName === null) return <div>...loading (please wait)</div>;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,7 +25,7 @@ function App() {
   };
 
   const matchingCountries = search
-    ? allCountries.filter((country) =>
+    ? everyCountryName.filter((country) =>
         country.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
       )
     : [];
@@ -38,12 +37,14 @@ function App() {
       </div>
 
       {matchingCountries.length > MAX_NUM_COUNTRIES ? (
-        <div>To many matches, specify another filter</div>
+        <div>Too many matches, specify another filter</div>
+      ) : matchingCountries.length === 1 ? (
+        <DisplayCountryInfos country={matchingCountries[0]} />
       ) : (
         matchingCountries.map((country) => <div key={country}>{country}</div>)
       )}
     </form>
   );
-}
+};
 
 export default App;
