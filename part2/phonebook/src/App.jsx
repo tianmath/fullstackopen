@@ -18,6 +18,16 @@ const App = () => {
     });
   }, []);
 
+  const displayNotification = (type, message, duration) => {
+    setMessage({
+      type: type,
+      text: message,
+    });
+    setTimeout(() => {
+      setMessage(null);
+    }, duration);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -41,22 +51,18 @@ const App = () => {
                 person.id === returnedPerson.id ? returnedPerson : person,
               ),
             );
-            setMessage({
-              type: 'success',
-              text: `Number for ${personWithSameName.name} changed`,
-            });
-            setTimeout(() => {
-              setMessage(null);
-            }, 5000);
+            displayNotification(
+              'success',
+              `Number for ${personWithSameName.name} changed`,
+              5000,
+            );
           })
           .catch((error) => {
-            setMessage({
-              type: 'error',
-              text: `Information of ${personWithSameName.name} was already removed from server`,
-            });
-            setTimeout(() => {
-              setMessage(null);
-            }, 5000);
+            displayNotification(
+              'error',
+              `Information of ${personWithSameName.name} has already been removed from server`,
+              5000,
+            );
             setPersons(persons.filter((p) => p.id !== personWithSameName.id));
           });
       }
@@ -75,10 +81,7 @@ const App = () => {
       setPersons(persons.concat(returnedPerson));
       setNewName('');
       setNewNumber('');
-      setMessage({ type: 'success', text: `Added ${newName}` });
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+      displayNotification('success', `Added ${newName}`, 5000);
     });
   };
 
