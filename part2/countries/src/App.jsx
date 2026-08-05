@@ -31,19 +31,23 @@ const App = () => {
     : [];
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        find countries: <input value={search} onChange={handleSearchChange} />
-      </div>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div>
+          find countries: <input value={search} onChange={handleSearchChange} />
+        </div>
+      </form>
 
       {matchingCountries.length > MAX_NUM_COUNTRIES ? (
         <div>Too many matches, specify another filter</div>
+      ) : matchingCountries.length > 1 ? (
+        matchingCountries.map((country) => <div key={country}>{country}</div>)
       ) : matchingCountries.length === 1 ? (
         <DisplayCountryInfos country={matchingCountries[0]} />
       ) : (
-        matchingCountries.map((country) => <div key={country}>{country}</div>)
+        ''
       )}
-    </form>
+    </div>
   );
 };
 
