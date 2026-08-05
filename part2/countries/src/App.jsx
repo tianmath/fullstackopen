@@ -7,6 +7,7 @@ const MAX_NUM_COUNTRIES = 10;
 const App = () => {
   const [search, setSearch] = useState('');
   const [everyCountryName, setEveryCountryName] = useState(null);
+  const [matchingCountries, setMatchingCountries] = useState([]);
 
   useEffect(() => {
     countriesService.getAllCountry().then((allCountries) => {
@@ -18,30 +19,41 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    setMatchingCountries(
+      search
+        ? everyCountryName.filter((country) =>
+            country.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
+          )
+        : [],
+    );
   };
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
-  const matchingCountries = search
-    ? everyCountryName.filter((country) =>
-        country.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
-      )
-    : [];
+  const handleShowInfos = (country) => {
+    setMatchingCountries([country]);
+  };
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <div>
-          find countries: <input value={search} onChange={handleSearchChange} />
+          find countries <input value={search} onChange={handleSearchChange} />
         </div>
       </form>
 
       {matchingCountries.length > MAX_NUM_COUNTRIES ? (
         <div>Too many matches, specify another filter</div>
       ) : matchingCountries.length > 1 ? (
-        matchingCountries.map((country) => <div key={country}>{country}</div>)
+        matchingCountries.map((country) => (
+          <div key={country}>
+            {`${country} `}
+            <button onClick={() => handleShowInfos(country)}>Show</button>
+          </div>
+        ))
       ) : matchingCountries.length === 1 ? (
         <DisplayCountryInfos country={matchingCountries[0]} />
       ) : (
