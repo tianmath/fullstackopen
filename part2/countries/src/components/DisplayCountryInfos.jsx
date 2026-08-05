@@ -3,6 +3,7 @@ import countriesService from '../services/countries';
 
 const DisplayCountryInfos = ({ country }) => {
   const [infos, setInfos] = useState(null);
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
     countriesService.getCountry(country).then((country) => {
@@ -10,7 +11,15 @@ const DisplayCountryInfos = ({ country }) => {
     });
   }, [country]);
 
-  if (!infos) return;
+  useEffect(() => {
+    if (infos) {
+      countriesService
+        .getWeather(infos.capitalInfo.latlng)
+        .then((weather) => setWeather(weather));
+    }
+  }, [infos]);
+
+  if (!infos || !weather) return;
 
   const {
     capital,
@@ -18,6 +27,12 @@ const DisplayCountryInfos = ({ country }) => {
     languages,
     flags: { png: flagUrl, alt },
   } = infos;
+
+  const {
+    weather: [{ icon }],
+    main: { temp },
+    wind: { speed: wind },
+  } = weather;
 
   return (
     <div>
@@ -33,7 +48,12 @@ const DisplayCountryInfos = ({ country }) => {
         ))}
       </ul>
 
-      <img className='flag' src={flagUrl} alt={alt} />
+      <img src={flagUrl} alt={alt} />
+
+      <h2>Weather in {capital}</h2>
+      <div>{`Temperature ${(temp - 273.15).toFixed(2)} Celcius`}</div>
+      <img src={`https://openweathermap.org/img/wn/${icon}@2x.png`} />
+      <div>{`Wind ${wind} m/s`}</div>
     </div>
   );
 };
