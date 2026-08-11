@@ -1,0 +1,30 @@
+DELETE http://localhost:3001/api/persons/2
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Moine Botista",
+  "number": "123-123456"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "number": "123-123456"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Gollum"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
