@@ -28,3 +28,15 @@ Content-Type: application/json
 ###
 POST http://localhost:3001/api/persons
 Content-Type: application/json
+
+###
+POST https://phonebook-backend-6usi.onrender.com/api/persons
+Content-Type: application/json
+
+{
+  "name": "Gail in Storm",
+  "number": "000-000000"
+}
+
+###
+DELETE https://phonebook-backend-6usi.onrender.com/api/persons/3
