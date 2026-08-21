@@ -100,12 +100,12 @@ app.post('/api/persons', (request, response) => {
 });
 
 app.get('/info', (request, response) => {
-  const numPersons = persons.length;
-  const now = new Date().toString();
-
-  response.send(
-    `<div>Phonebook has info for ${numPersons} people</div><br/><div>${now}</div>`,
-  );
+  Person.find({}).then((people) => {
+    const now = new Date().toString();
+    response.send(
+      `<div>Phonebook has info for ${people.length} people</div><br/><div>${now}</div>`,
+    );
+  });
 });
 
 const errorHandler = (error, request, response, next) => {
