@@ -58,12 +58,18 @@ const App = () => {
             );
           })
           .catch((error) => {
-            displayNotification(
-              'error',
-              `Information of ${personWithSameName.name} has already been removed from server`,
-              5000,
-            );
-            setPersons(persons.filter((p) => p.id !== personWithSameName.id));
+            if (error.response.status === 404) {
+              displayNotification(
+                'error',
+                `Information of ${personWithSameName.name} has already been removed from server`,
+                5000,
+              );
+              setPersons(persons.filter((p) => p.id !== personWithSameName.id));
+              return;
+            }
+
+            console.log(error.response.data.error);
+            displayNotification('error', error.response.data.error, 5000);
           });
       }
 
@@ -77,12 +83,18 @@ const App = () => {
       number: newNumber,
     };
 
-    phonebookService.create(person).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName('');
-      setNewNumber('');
-      displayNotification('success', `Added ${newName}`, 5000);
-    });
+    phonebookService
+      .create(person)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+        displayNotification('success', `Added ${newName}`, 5000);
+      })
+      .catch((error) => {
+        console.log(error.response.data.error);
+        displayNotification('error', error.response.data.error, 5000);
+      });
   };
 
   const handleRemovePerson = (person) => {
