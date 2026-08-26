@@ -1,19 +1,22 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 
+const Blog = require('./models/blog');
+
 const app = express();
 
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number,
-});
+const mongoUrl = process.env.MONGODB_URI;
 
-const Blog = mongoose.model('Blog', blogSchema);
-
-const mongoUrl = 'mongodb://localhost/bloglist';
-mongoose.connect(mongoUrl, { family: 4 });
+console.log('connecting to', mongoUrl);
+mongoose
+  .connect(mongoUrl, { family: 4 })
+  .then((result) => {
+    console.log('connected to MongoDB');
+  })
+  .catch((error) => {
+    console.log('error connecting to MongoDB:', error.message);
+  });
 
 app.use(express.json());
 
@@ -23,15 +26,18 @@ app.get('/api/blogs', (request, response) => {
   });
 });
 
-app.post('/api/blogs', (request, response) => {
+app.post('/api/blogs', (request, response, next) => {
   const blog = new Blog(request.body);
 
-  blog.save().then((result) => {
-    response.status(201).json(result);
-  });
+  blog
+    .save()
+    .then((savedBlog) => {
+      response.status(201).json(savedBlog);
+    })
+    .catch((error) => next(error));
 });
 
-const PORT = 3003;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

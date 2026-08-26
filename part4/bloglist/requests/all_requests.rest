@@ -1,0 +1,20 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Mr Peabody won",
+  "author": "Chewara",
+  "url": "someURL",
+  "likes": 12
+}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Storm defeated Deeboo",
+  "author": "Chewara",
+  "url": "anotherURL",
+  "likes": 12
+}
