@@ -16,6 +16,12 @@ const favoriteBlog = (blogs) => {
   );
 };
 
+const findMaxEntry = (entries) =>
+  entries.reduce(
+    (maxEntry, entry) => (entry[1] > maxEntry[1] ? entry : maxEntry),
+    entries[0],
+  );
+
 const mostBlogs = (blogs) => {
   if (blogs.length === 0) return null;
 
@@ -28,16 +34,28 @@ const mostBlogs = (blogs) => {
     authsNumBlogs[blog.author] += 1;
   });
 
-  authsNumBlogs = Object.entries(authsNumBlogs);
-
-  const mostBlogAuth = authsNumBlogs.reduce(
-    (mostBlogAuth, auth) => (auth[1] > mostBlogAuth[1] ? auth : mostBlogAuth),
-    authsNumBlogs[0],
-  );
+  const mostBlogAuth = findMaxEntry(Object.entries(authsNumBlogs));
 
   return {
     author: mostBlogAuth[0],
     blogs: mostBlogAuth[1],
+  };
+};
+
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return null;
+
+  let authsTotalLikes = Object.fromEntries([
+    ...new Set(blogs.map((blog) => [blog.author, 0])),
+  ]);
+
+  blogs.forEach((blog) => (authsTotalLikes[blog.author] += blog.likes));
+
+  const authMostLikes = findMaxEntry(Object.entries(authsTotalLikes));
+
+  return {
+    author: authMostLikes[0],
+    likes: authMostLikes[1],
   };
 };
 
@@ -46,4 +64,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
