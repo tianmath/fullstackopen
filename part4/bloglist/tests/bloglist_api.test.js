@@ -23,6 +23,12 @@ test('all blogs are correctly returned in JSON format', async () => {
   assert.strictEqual(response.body.length, helper.initialBlogs.length);
 });
 
+test('the unique identifier property of a blog is named id', async () => {
+  const someBlog = (await Blog.find({}))[0];
+
+  assert.strictEqual(someBlog._id.toString(), someBlog.toJSON().id);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
