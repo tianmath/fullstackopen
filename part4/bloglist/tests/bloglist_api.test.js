@@ -81,6 +81,24 @@ test("likes default to 0 if missing from POST request's body", async () => {
   assert.strictEqual(responseWithoutLikes.body.likes, 0);
 });
 
+test('backend respondes with status code 400 if title or url is missing', async () => {
+  const noTitleBlog = {
+    author: 'Mr Peabody and Storm',
+    url: 'http://example.com/test-noTitle.html',
+    likes: 0,
+  };
+
+  await api.post('/api/blogs').send(noTitleBlog).expect(400);
+
+  const noURLBlog = {
+    title: 'No URL blog',
+    author: 'Mr Peabody and Storm',
+    likes: 0,
+  };
+
+  await api.post('/api/blogs').send(noURLBlog).expect(400);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
