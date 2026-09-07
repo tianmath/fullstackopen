@@ -51,6 +51,36 @@ test('a blog post can be created', async () => {
   assert(contents.includes('TDD harms architecture (instance 2)'));
 });
 
+test("likes default to 0 if missing from POST request's body", async () => {
+  const withLikesBlog = {
+    title: 'No likes blog',
+    author: 'Mr Peabody and Storm',
+    url: 'http://example.com/test-withLikes.html',
+    likes: 4,
+  };
+
+  const withoutLikesBlog = {
+    title: 'No likes blog',
+    author: 'Mr Peabody and Storm',
+    url: 'http://example.com/test-withoutLikes.html',
+  };
+
+  const responseWithLikes = await api
+    .post('/api/blogs')
+    .send(withLikesBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const responseWithoutLikes = await api
+    .post('/api/blogs')
+    .send(withoutLikesBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  assert.strictEqual(responseWithLikes.body.likes, 4);
+  assert.strictEqual(responseWithoutLikes.body.likes, 0);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
