@@ -99,6 +99,21 @@ test('backend respondes with status code 400 if title or url is missing', async 
   await api.post('/api/blogs').send(noURLBlog).expect(400);
 });
 
+describe('updating of a blog post', () => {
+  test('succeeds with status code 200 if id is valid', async () => {
+    const blogToUpdate = (await helper.blogsInDb())[0];
+    assert.strictEqual(blogToUpdate.likes, 7);
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send({ likes: 99 })
+      .expect(200);
+
+    const updatedBlog = (await helper.blogsInDb())[0];
+    assert.strictEqual(updatedBlog.likes, 99);
+  });
+});
+
 describe('deletion of a blog post', () => {
   test('succeeds with status code 204 if id is valid', async () => {
     const blogsAtStart = await helper.blogsInDb();
