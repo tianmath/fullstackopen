@@ -92,11 +92,6 @@ describe('total likes', () => {
 });
 
 describe('favorite blog', () => {
-  let blogsFavorite = blogs[0];
-  blogs.forEach((blog) => {
-    if (blog.likes > blogsFavorite.likes) blogsFavorite = blog;
-  });
-
   test('of empty list is null', () => {
     assert.strictEqual(listHelper.favoriteBlog([]), null);
   });
@@ -109,7 +104,14 @@ describe('favorite blog', () => {
   });
 
   test('of a bigger list is calculated right', () => {
-    assert.strictEqual(listHelper.favoriteBlog(blogs), blogsFavorite);
+    assert.deepStrictEqual(listHelper.favoriteBlog(blogs), {
+      _id: '5a422b3a1b54a676234d17f9',
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+      __v: 0,
+    });
   });
 });
 
