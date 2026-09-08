@@ -43,7 +43,7 @@ test('a blog post can be created', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/);
 
-  const blogsAtEnd = await helper.BlogsInDb();
+  const blogsAtEnd = await helper.blogsInDb();
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1);
 
   const contents = blogsAtEnd.map((n) => n.title);
