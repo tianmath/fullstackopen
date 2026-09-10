@@ -8,127 +8,129 @@ const Blog = require('../models/blog');
 
 const api = supertest(app);
 
-beforeEach(async () => {
-  await Blog.deleteMany({});
+describe('when there is initially some blogs saved', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({});
 
-  await Blog.insertMany(helper.initialBlogs);
-});
+    await Blog.insertMany(helper.initialBlogs);
+  });
 
-test('all blogs are correctly returned in JSON format', async () => {
-  const response = await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/);
-
-  assert.strictEqual(response.body.length, helper.initialBlogs.length);
-});
-
-test('the unique identifier property of a blog is named id', async () => {
-  const someBlog = (await Blog.find({}))[0];
-
-  assert.strictEqual(someBlog._id.toString(), someBlog.toJSON().id);
-});
-
-describe('addition of a blog', () => {
-  test('succeeds with valid data', async () => {
-    const newBlog = {
-      title: 'TDD harms architecture (instance 2)',
-      author: 'Robert C. Martin',
-      url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
-      likes: 0,
-    };
-
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
+  test('all blogs are correctly returned in JSON format', async () => {
+    const response = await api
+      .get('/api/blogs')
+      .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    const blogsAtEnd = await helper.blogsInDb();
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1);
-
-    const contents = blogsAtEnd.map((n) => n.title);
-
-    assert(contents.includes('TDD harms architecture (instance 2)'));
+    assert.strictEqual(response.body.length, helper.initialBlogs.length);
   });
 
-  test("defaults likes to 0 if likes is missing from POST request's body", async () => {
-    const withLikesBlog = {
-      title: 'No likes blog',
-      author: 'Mr Peabody and Storm',
-      url: 'http://example.com/test-withLikes.html',
-      likes: 4,
-    };
+  test('the unique identifier property of a blog is named id', async () => {
+    const someBlog = (await Blog.find({}))[0];
 
-    const withoutLikesBlog = {
-      title: 'No likes blog',
-      author: 'Mr Peabody and Storm',
-      url: 'http://example.com/test-withoutLikes.html',
-    };
-
-    const responseWithLikes = await api
-      .post('/api/blogs')
-      .send(withLikesBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/);
-
-    const responseWithoutLikes = await api
-      .post('/api/blogs')
-      .send(withoutLikesBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/);
-
-    assert.strictEqual(responseWithLikes.body.likes, 4);
-    assert.strictEqual(responseWithoutLikes.body.likes, 0);
+    assert.strictEqual(someBlog._id.toString(), someBlog.toJSON().id);
   });
 
-  test('returns status code 400 if title or url is missing', async () => {
-    const noTitleBlog = {
-      author: 'Mr Peabody and Storm',
-      url: 'http://example.com/test-noTitle.html',
-      likes: 0,
-    };
+  describe('addition of a blog', () => {
+    test('succeeds with valid data', async () => {
+      const newBlog = {
+        title: 'TDD harms architecture (instance 2)',
+        author: 'Robert C. Martin',
+        url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+        likes: 0,
+      };
 
-    await api.post('/api/blogs').send(noTitleBlog).expect(400);
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
 
-    const noURLBlog = {
-      title: 'No URL blog',
-      author: 'Mr Peabody and Storm',
-      likes: 0,
-    };
+      const blogsAtEnd = await helper.blogsInDb();
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1);
 
-    await api.post('/api/blogs').send(noURLBlog).expect(400);
+      const contents = blogsAtEnd.map((n) => n.title);
+
+      assert(contents.includes('TDD harms architecture (instance 2)'));
+    });
+
+    test("defaults likes to 0 if likes is missing from POST request's body", async () => {
+      const withLikesBlog = {
+        title: 'No likes blog',
+        author: 'Mr Peabody and Storm',
+        url: 'http://example.com/test-withLikes.html',
+        likes: 4,
+      };
+
+      const withoutLikesBlog = {
+        title: 'No likes blog',
+        author: 'Mr Peabody and Storm',
+        url: 'http://example.com/test-withoutLikes.html',
+      };
+
+      const responseWithLikes = await api
+        .post('/api/blogs')
+        .send(withLikesBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+
+      const responseWithoutLikes = await api
+        .post('/api/blogs')
+        .send(withoutLikesBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+
+      assert.strictEqual(responseWithLikes.body.likes, 4);
+      assert.strictEqual(responseWithoutLikes.body.likes, 0);
+    });
+
+    test('returns status code 400 if title or url is missing', async () => {
+      const noTitleBlog = {
+        author: 'Mr Peabody and Storm',
+        url: 'http://example.com/test-noTitle.html',
+        likes: 0,
+      };
+
+      await api.post('/api/blogs').send(noTitleBlog).expect(400);
+
+      const noURLBlog = {
+        title: 'No URL blog',
+        author: 'Mr Peabody and Storm',
+        likes: 0,
+      };
+
+      await api.post('/api/blogs').send(noURLBlog).expect(400);
+    });
   });
-});
 
-describe('updating of a blog post', () => {
-  test('succeeds with status code 200 if id is valid', async () => {
-    const blogToUpdate = (await helper.blogsInDb())[0];
-    assert.strictEqual(blogToUpdate.likes, 7);
+  describe('updating of a blog post', () => {
+    test('succeeds with status code 200 if id is valid', async () => {
+      const blogToUpdate = (await helper.blogsInDb())[0];
+      assert.strictEqual(blogToUpdate.likes, 7);
 
-    await api
-      .put(`/api/blogs/${blogToUpdate.id}`)
-      .send({ likes: 99 })
-      .expect(200);
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send({ likes: 99 })
+        .expect(200);
 
-    const updatedBlog = (await helper.blogsInDb())[0];
-    assert.strictEqual(updatedBlog.likes, 99);
+      const updatedBlog = (await helper.blogsInDb())[0];
+      assert.strictEqual(updatedBlog.likes, 99);
+    });
   });
-});
 
-describe('deletion of a blog post', () => {
-  test('succeeds with status code 204 if id is valid', async () => {
-    const blogsAtStart = await helper.blogsInDb();
-    const blogToDelete = blogsAtStart[0];
+  describe('deletion of a blog post', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb();
+      const blogToDelete = blogsAtStart[0];
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+      await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
 
-    const blogsAtEnd = await helper.blogsInDb();
+      const blogsAtEnd = await helper.blogsInDb();
 
-    const ids = blogsAtEnd.map((b) => b.id);
-    assert(!ids.includes(blogToDelete.id));
+      const ids = blogsAtEnd.map((b) => b.id);
+      assert(!ids.includes(blogToDelete.id));
 
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1);
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1);
+    });
   });
 });
 
