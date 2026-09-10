@@ -18,3 +18,23 @@ Content-Type: application/json
   "url": "anotherURL",
   "likes": 12
 }
+
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "chewara",
+  "name": "Na",
+  "password": "salainen"
+}
+
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "Botista",
+  "name": "Mr Peabody",
+  "password": "salainen"
+}
