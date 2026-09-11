@@ -1,9 +1,7 @@
 const jwt = require('jsonwebtoken');
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
-const { error } = require('../utils/logger');
 const User = require('../models/user');
-const blog = require('../models/blog');
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('author', {
@@ -15,7 +13,9 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   if (!request.body.title || !request.body.url)
-    return response.status(400).end();
+    return response
+      .status(400)
+      .json({ error: 'both title and url are required' });
 
   const decodedToken = jwt.verify(request.token, process.env.SECRET);
   if (!decodedToken.id) {
