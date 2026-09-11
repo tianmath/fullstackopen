@@ -3,6 +3,7 @@ const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const { error } = require('../utils/logger');
 const User = require('../models/user');
+const blog = require('../models/blog');
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('author', {
@@ -36,6 +37,23 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
+  if (!request.token)
+    return response.status(400).json({ error: 'token missing' });
+
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' });
+  }
+  const user = await User.findById(decodedToken.id);
+
+  const blogToDelete = await Blog.findById(request.params.id);
+
+  if (user._id.toString() !== blogToDelete.author.toString()) {
+    return response
+      .status(403)
+      .json({ error: `user invalid, can't delete other's blog` });
+  }
+
   await Blog.findByIdAndDelete(request.params.id);
   response.status(204).end();
 });
