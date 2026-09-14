@@ -1,6 +1,34 @@
 const Blog = require('../models/blog');
 const User = require('../models/user');
 
+const initialAuthors = [
+  {
+    username: 'michan',
+    name: 'Michael Chan',
+    passwordHash:
+      '$2b$10$ccN0qB8EG5me0UHyGuWfture19FFf/Zcu5BMe/2SN78D4sYgRY2P6',
+    blogs: ['5a422a851b54a676234d17f7'],
+  },
+  {
+    username: 'dijkstra',
+    name: 'Edsger W. Dijkstra',
+    passwordHash:
+      '$2b$10$ccN0qB8EG5me0UHyGuWfture19FFf/Zcu5BMe/2SN78D4sYgRY2P6',
+    blogs: ['5a422aa71b54a676234d17f8', '5a422b3a1b54a676234d17f9'],
+  },
+  {
+    username: 'martin',
+    name: 'Robert C. Martin',
+    passwordHash:
+      '$2b$10$ccN0qB8EG5me0UHyGuWfture19FFf/Zcu5BMe/2SN78D4sYgRY2P6',
+    blogs: [
+      '5a422b891b54a676234d17fa',
+      '5a422ba71b54a676234d17fb',
+      '5a422bc61b54a676234d17fc',
+    ],
+  },
+];
+
 const initialBlogs = [
   {
     _id: '5a422a851b54a676234d17f7',
@@ -63,6 +91,7 @@ const usersInDb = async () => {
 };
 
 module.exports = {
+  initialAuthors,
   initialBlogs,
   blogsInDb,
   usersInDb,
