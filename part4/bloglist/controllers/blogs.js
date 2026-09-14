@@ -1,7 +1,6 @@
-const jwt = require('jsonwebtoken');
+const middleware = require('../utils/middleware');
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
-const User = require('../models/user');
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('author', {
@@ -11,17 +10,13 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs);
 });
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   if (!request.body.title || !request.body.url)
     return response
       .status(400)
       .json({ error: 'both title and url are required' });
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' });
-  }
-  const user = await User.findById(decodedToken.id);
+  const user = request.user;
 
   const blog = new Blog({
     ...request.body,
@@ -36,27 +31,24 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog);
 });
 
-blogsRouter.delete('/:id', async (request, response) => {
-  if (!request.token)
-    return response.status(400).json({ error: 'token missing' });
+blogsRouter.delete(
+  '/:id',
+  middleware.userExtractor,
+  async (request, response) => {
+    const user = request.user;
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' });
-  }
-  const user = await User.findById(decodedToken.id);
+    const blogToDelete = await Blog.findById(request.params.id);
 
-  const blogToDelete = await Blog.findById(request.params.id);
+    if (user._id.toString() !== blogToDelete.author.toString()) {
+      return response
+        .status(403)
+        .json({ error: `user invalid, can't delete other's blog` });
+    }
 
-  if (user._id.toString() !== blogToDelete.author.toString()) {
-    return response
-      .status(403)
-      .json({ error: `user invalid, can't delete other's blog` });
-  }
-
-  await Blog.findByIdAndDelete(request.params.id);
-  response.status(204).end();
-});
+    await Blog.findByIdAndDelete(request.params.id);
+    response.status(204).end();
+  },
+);
 
 blogsRouter.put('/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id);

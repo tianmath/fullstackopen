@@ -11,12 +11,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoZ
 ###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoZXdhcmEiLCJpZCI6IjZhYTJiYjhiMmQxZGViOGViODk2NTZhNSIsImlhdCI6MTc4OTEwODI4MiwiZXhwIjoxNzg5MTExODgyfQ.LS3YjaqlDadZYR4f6hEL8vfj3ZW6uLMmMGCfhx4TJbk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoZXdhcmEiLCJpZCI6IjZhYTJiYjhiMmQxZGViOGViODk2NTZhNSIsImlhdCI6MTc4OTM3OTU1OCwiZXhwIjoxNzg5MzgzMTU4fQ.CM3idn-M-_trhqN1xeG-VdEBKaDeTFfXK49q5cASEs4
 
 {
-  "title": "Storm defeated Deeboo",
-  "url": "anotherURL",
-  "likes": 12
+  "title": "A test to delete",
+  "url": "deleteURL",
+  "likes": 15
 }
 
 ###
@@ -47,3 +47,7 @@ Content-Type: application/json
   "username": "chewara",
   "password": "salainen"
 }
+
+###
+DELETE http://localhost:3003/api/blogs/6aa7cf783b94dde29da9a5a8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoZXdhcmEiLCJpZCI6IjZhYTJiYjhiMmQxZGViOGViODk2NTZhNSIsImlhdCI6MTc4OTM3OTU1OCwiZXhwIjoxNzg5MzgzMTU4fQ.CM3idn-M-_trhqN1xeG-VdEBKaDeTFfXK49q5cASEs4
