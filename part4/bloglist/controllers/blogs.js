@@ -35,9 +35,13 @@ blogsRouter.delete(
   '/:id',
   middleware.userExtractor,
   async (request, response) => {
-    const user = request.user;
+    const blogToDeleteId = request.params.id;
 
-    const blogToDelete = await Blog.findById(request.params.id);
+    const blogToDelete = await Blog.findById(blogToDeleteId);
+    if (!blogToDelete)
+      return response.status(404).json({ error: `blog doesn't exist` });
+
+    const user = request.user;
 
     if (user._id.toString() !== blogToDelete.author.toString()) {
       return response
@@ -45,7 +49,10 @@ blogsRouter.delete(
         .json({ error: `user invalid, can't delete other's blog` });
     }
 
-    await Blog.findByIdAndDelete(request.params.id);
+    await Blog.findByIdAndDelete(blogToDeleteId);
+    user.blogs = user.blogs.filter((id) => id.toString() !== blogToDeleteId);
+    await user.save();
+
     response.status(204).end();
   },
 );
