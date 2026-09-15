@@ -11,62 +11,45 @@ const User = require('../models/user');
 const api = supertest(app);
 
 describe('when there is initially some blogs saved', () => {
-  // let allUsers;
+  let allUsers;
 
-  // beforeEach(async () => {
-  //   await User.deleteMany({});
-  //   await User.insertMany(helper.initialAuthors);
+  before(async () => {
+    await User.deleteMany({});
+    await User.insertMany(helper.initialAuthors);
 
-  //   allUsers = await User.find({});
+    allUsers = await User.find({});
 
-  //   const initialBlogsWithAuthorIds = helper.initialBlogs.map((blog) => {
-  //     const user = allUsers.find(
-  //       (user, index, arr) => user.name === blog.author,
-  //     );
-  //     return { ...blog, author: user._id.toString() };
-  //   });
+    const initialBlogsWithAuthorIds = helper.initialBlogs.map((blog) => {
+      const user = allUsers.find(
+        (user, index, arr) => user.name === blog.author,
+      );
+      return { ...blog, author: user._id.toString() };
+    });
 
-  //   await Blog.deleteMany({});
-  //   await Blog.insertMany(initialBlogsWithAuthorIds);
+    await Blog.deleteMany({});
+    await Blog.insertMany(initialBlogsWithAuthorIds);
+  });
 
-  // });
+  test('all blogs are correctly returned in JSON format', async () => {
+    const response = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
 
-  // test('all blogs are correctly returned in JSON format', async () => {
-  //   const response = await api
-  //     .get('/api/blogs')
-  //     .expect(200)
-  //     .expect('Content-Type', /application\/json/);
+    assert.strictEqual(response.body.length, helper.initialBlogs.length);
+  });
 
-  //   assert.strictEqual(response.body.length, helper.initialBlogs.length);
-  // });
+  test('the unique identifier property of a blog is named id', async () => {
+    const someBlog = (await Blog.find({}))[0];
 
-  // test('the unique identifier property of a blog is named id', async () => {
-  //   const someBlog = (await Blog.find({}))[0];
-
-  //   assert.strictEqual(someBlog._id.toString(), someBlog.toJSON().id);
-  // });
+    assert.strictEqual(someBlog._id.toString(), someBlog.toJSON().id);
+  });
 
   describe('addition of a blog', () => {
     describe('with a logged in user', () => {
-      let allUsers;
       let token;
 
       before(async () => {
-        await User.deleteMany({});
-        await User.insertMany(helper.initialAuthors);
-
-        allUsers = await User.find({});
-
-        const initialBlogsWithAuthorIds = helper.initialBlogs.map((blog) => {
-          const user = allUsers.find(
-            (user, index, arr) => user.name === blog.author,
-          );
-          return { ...blog, author: user._id.toString() };
-        });
-
-        await Blog.deleteMany({});
-        await Blog.insertMany(initialBlogsWithAuthorIds);
-
         const res = await api
           .post('/api/login')
           .send({
