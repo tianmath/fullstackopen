@@ -46,6 +46,17 @@ describe('when there is initially some blogs saved', () => {
   });
 
   describe('addition of a blog', () => {
+    test('without a logged user token fails with 401 status code', async () => {
+      const newBlog = {
+        title: 'failing blog',
+        author: allUsers[0]._id.toString(),
+        url: 'http://failing.blog.com/',
+        likes: 0,
+      };
+
+      await api.post('/api/blogs').send(newBlog).expect(401);
+    });
+
     describe('with a logged in user', () => {
       let token;
 
