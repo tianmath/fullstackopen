@@ -172,18 +172,32 @@ describe('when there is initially some blogs saved', () => {
   });
 
   describe('deletion of a blog post', () => {
-    test('succeeds with status code 204 if id is valid', async () => {
+    test('by owner succeeds with status code 204 if id is valid', async () => {
+      const res = await api
+        .post('/api/login')
+        .send({
+          username: 'michan',
+          password: 'sekret',
+        })
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      const token = res.body.token;
+
       const blogsAtStart = await helper.blogsInDb();
       const blogToDelete = blogsAtStart[0];
 
-      await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(204);
 
       const blogsAtEnd = await helper.blogsInDb();
 
       const ids = blogsAtEnd.map((b) => b.id);
       assert(!ids.includes(blogToDelete.id));
 
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1);
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1);
     });
   });
 });
