@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const testHelper = require('./tests/test_helper');
+const helper = require('./tests/test_helper');
 const User = require('./models/user');
 const Blog = require('./models/blog');
 
@@ -23,17 +23,19 @@ mongoose
 
 (async () => {
   await User.deleteMany({});
-  await User.insertMany(testHelper.initialAuthors);
+  await User.insertMany(helper.initialUsers);
 
-  const allUsers = await User.find({});
+  allUsers = await User.find({});
 
-  const initialBlogsWithAuthorIds = testHelper.initialBlogs.map((blog) => {
-    const user = allUsers.find((user, index, arr) => user.name === blog.author);
-    return { ...blog, author: user._id.toString() };
+  let userIndex = 0;
+  const initialBlogsWithUserIds = helper.initialBlogs.map((blog, index) => {
+    if (index !== 0 && index % 2 === 0) userIndex++;
+
+    return { ...blog, user: allUsers[userIndex]._id.toString() };
   });
 
   await Blog.deleteMany({});
-  await Blog.insertMany(initialBlogsWithAuthorIds);
+  await Blog.insertMany(initialBlogsWithUserIds);
 
   mongoose.connection.close();
 })();

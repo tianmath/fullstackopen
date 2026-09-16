@@ -15,19 +15,19 @@ describe('when there is initially some blogs saved', () => {
 
   before(async () => {
     await User.deleteMany({});
-    await User.insertMany(helper.initialAuthors);
+    await User.insertMany(helper.initialUsers);
 
     allUsers = await User.find({});
 
-    const initialBlogsWithAuthorIds = helper.initialBlogs.map((blog) => {
-      const user = allUsers.find(
-        (user, index, arr) => user.name === blog.author,
-      );
-      return { ...blog, author: user._id.toString() };
+    let userIndex = 0;
+    const initialBlogsWithUserIds = helper.initialBlogs.map((blog, index) => {
+      if (index !== 0 && index % 2 === 0) userIndex++;
+
+      return { ...blog, user: allUsers[userIndex]._id.toString() };
     });
 
     await Blog.deleteMany({});
-    await Blog.insertMany(initialBlogsWithAuthorIds);
+    await Blog.insertMany(initialBlogsWithUserIds);
   });
 
   test('all blogs are correctly returned in JSON format', async () => {
@@ -49,7 +49,7 @@ describe('when there is initially some blogs saved', () => {
     test('without a logged user token fails with 401 status code', async () => {
       const newBlog = {
         title: 'failing blog',
-        author: allUsers[0]._id.toString(),
+        user: allUsers[0]._id.toString(),
         url: 'http://failing.blog.com/',
         likes: 0,
       };
@@ -64,7 +64,7 @@ describe('when there is initially some blogs saved', () => {
         const res = await api
           .post('/api/login')
           .send({
-            username: 'martin',
+            username: 'chewara',
             password: 'sekret',
           })
           .expect(200)
@@ -76,7 +76,7 @@ describe('when there is initially some blogs saved', () => {
       test('succeeds with valid data', async () => {
         const newBlog = {
           title: 'TDD harms architecture (instance 2)',
-          author: allUsers[2]._id.toString(),
+          user: allUsers[2]._id.toString(),
           url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
           likes: 0,
         };
@@ -176,7 +176,7 @@ describe('when there is initially some blogs saved', () => {
       const res = await api
         .post('/api/login')
         .send({
-          username: 'michan',
+          username: 'chewara',
           password: 'sekret',
         })
         .expect(200)

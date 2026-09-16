@@ -3,7 +3,7 @@ const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({}).populate('author', {
+  const blogs = await Blog.find({}).populate('user', {
     username: 1,
     name: 1,
   });
@@ -20,7 +20,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 
   const blog = new Blog({
     ...request.body,
-    author: user.id,
+    user: user.id,
     likes: request.body.likes || 0,
   });
 
@@ -43,7 +43,7 @@ blogsRouter.delete(
 
     const user = request.user;
 
-    if (user._id.toString() !== blogToDelete.author.toString()) {
+    if (user._id.toString() !== blogToDelete.user.toString()) {
       return response
         .status(403)
         .json({ error: `user invalid, can't delete other's blog` });
