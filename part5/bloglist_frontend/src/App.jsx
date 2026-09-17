@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Notification from './components/Notification';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
@@ -14,6 +14,7 @@ const App = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -78,6 +79,7 @@ const App = () => {
       setTitle('');
       setAuthor('');
       setUrl('');
+      blogFormRef.current.toggleVisibility();
     } catch (error) {
       displayNotification(
         'error',
@@ -121,7 +123,7 @@ const App = () => {
   );
 
   const createBlogForm = () => (
-    <Togglable buttonLabel='create new blog'>
+    <Togglable buttonLabel='create new blog' ref={blogFormRef}>
       <h2>create new</h2>
       <form onSubmit={createBlog}>
         <div>
