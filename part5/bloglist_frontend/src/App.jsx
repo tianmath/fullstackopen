@@ -17,7 +17,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser');
+    const loggedUserJSON = window.localStorage.getItem('loggedBloglistAppUser');
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
@@ -35,8 +35,15 @@ const App = () => {
     }, duration);
   };
 
+  const handleLogin = (user) => {
+    window.localStorage.setItem('loggedBloglistAppUser', JSON.stringify(user));
+    blogService.setToken(user.token);
+    setUser(user);
+  };
+
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedNoteappUser');
+    window.localStorage.removeItem('loggedBloglistAppUser');
+    blogService.setToken(null);
     setUser(null);
   };
 
@@ -46,7 +53,10 @@ const App = () => {
   };
 
   const loginForm = () => (
-    <LoginForm setUser={setUser} displayNotification={displayNotification} />
+    <LoginForm
+      handleLogin={handleLogin}
+      displayNotification={displayNotification}
+    />
   );
 
   const createBlogForm = () => (

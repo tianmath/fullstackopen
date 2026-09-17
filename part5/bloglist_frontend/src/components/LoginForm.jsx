@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import loginService from '../services/login';
 
-const LoginForm = ({ setUser, displayNotification }) => {
+const LoginForm = ({ handleLogin, displayNotification }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -10,8 +10,7 @@ const LoginForm = ({ setUser, displayNotification }) => {
 
     try {
       const user = await loginService.login({ username, password });
-      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
-      setUser(user);
+      handleLogin(user);
       setUsername('');
       setPassword('');
     } catch {
