@@ -12,8 +12,13 @@ const App = () => {
   const [user, setUser] = useState(null);
   const blogFormRef = useRef();
 
+  const fetchallBlogsAndSort = async () => {
+    const blogs = await blogService.getAll();
+    setBlogs(blogs.toSorted((blog1, blog2) => blog2.likes - blog1.likes));
+  };
+
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    (async () => await fetchallBlogsAndSort())();
   }, []);
 
   useEffect(() => {
@@ -88,7 +93,11 @@ const App = () => {
           {createBlogForm()}
 
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              fetchallBlogsAndSort={fetchallBlogsAndSort}
+            />
           ))}
         </>
       )}

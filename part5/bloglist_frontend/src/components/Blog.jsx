@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import blogService from '../services/blogs';
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, fetchallBlogsAndSort }) => {
   const [displayDetails, setDisplayDetails] = useState(false);
   const [likes, setLikes] = useState(blog.likes);
 
@@ -18,6 +18,7 @@ const Blog = ({ blog }) => {
       likes: likes + 1,
     });
     setLikes(returnedBlog.likes);
+    await fetchallBlogsAndSort();
   };
 
   return (
