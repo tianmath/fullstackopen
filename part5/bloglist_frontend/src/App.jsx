@@ -22,12 +22,16 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBloglistAppUser');
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
+    (() => {
+      const loggedUserJSON = window.localStorage.getItem(
+        'loggedBloglistAppUser',
+      );
+      if (loggedUserJSON) {
+        const user = JSON.parse(loggedUserJSON);
+        setUser(user);
+        blogService.setToken(user.token);
+      }
+    })();
   }, []);
 
   const displayNotification = (type, message, duration) => {
