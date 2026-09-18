@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import blogService from '../services/blogs';
 
-const Blog = ({ blog, fetchallBlogsAndSort, displayNotification }) => {
+const Blog = ({ blog, user, fetchallBlogsAndSort, displayNotification }) => {
   const [displayDetails, setDisplayDetails] = useState(false);
   const [likes, setLikes] = useState(blog.likes);
 
@@ -49,7 +49,9 @@ const Blog = ({ blog, fetchallBlogsAndSort, displayNotification }) => {
             <button onClick={handleLike}>like</button>
           </div>
           <div>{blog.user.username}</div>
-          <button onClick={handleRemove}>remove</button>
+          {blog.user.username === user.username && (
+            <button onClick={handleRemove}>remove</button>
+          )}
         </>
       )}
     </div>
