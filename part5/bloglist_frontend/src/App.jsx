@@ -97,6 +97,7 @@ const App = () => {
               key={blog.id}
               blog={blog}
               fetchallBlogsAndSort={fetchallBlogsAndSort}
+              displayNotification={displayNotification}
             />
           ))}
         </>
