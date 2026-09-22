@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import Blog from './Blog';
 
 describe('<Blog />', () => {
@@ -54,5 +55,18 @@ describe('<Blog />', () => {
     expect(titleAuthorElement).toBeDefined();
     expect(urlElement).toBeNull();
     expect(likeButton).toBeNull();
+  });
+
+  test('displays URL and number of likes when the view button is clicked', async () => {
+    const user = userEvent.setup();
+    const button = screen.getByText('view');
+
+    await user.click(button);
+
+    const urlElement = screen.queryByText(`${blog.url}`);
+    const likeButton = screen.queryByText('like');
+
+    expect(urlElement).toBeDefined();
+    expect(likeButton).toBeDefined();
   });
 });
