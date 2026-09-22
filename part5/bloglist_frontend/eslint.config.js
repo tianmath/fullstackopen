@@ -37,4 +37,12 @@ export default [
       'arrow-spacing': ['error', { before: true, after: true }],
     },
   },
+  {
+    files: ['**/*.test.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.vitest,
+      },
+    },
+  },
 ];
