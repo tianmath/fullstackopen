@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import blogService from '../services/blogs';
 
-const BlogForm = ({ addBlog, displayNotification }) => {
+const BlogForm = ({ addBlog }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
@@ -15,25 +14,11 @@ const BlogForm = ({ addBlog, displayNotification }) => {
       url,
     };
 
-    try {
-      const returnedBlog = await blogService.create(newBlog);
-      addBlog(returnedBlog);
-      displayNotification(
-        'success',
-        `a new blog "${title}" by ${author} added`,
-        3000,
-      );
+    await addBlog(newBlog);
 
-      setTitle('');
-      setAuthor('');
-      setUrl('');
-    } catch {
-      displayNotification(
-        'error',
-        'title or url are missing, or your session expired',
-        5000,
-      );
-    }
+    setTitle('');
+    setAuthor('');
+    setUrl('');
   };
 
   return (

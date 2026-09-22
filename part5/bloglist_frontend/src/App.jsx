@@ -56,9 +56,24 @@ const App = () => {
     setUser(null);
   };
 
-  const addBlog = (blog) => {
-    setBlogs(blogs.concat(blog));
-    blogFormRef.current.toggleVisibility();
+  const addBlog = async (blog) => {
+    try {
+      const returnedBlog = await blogService.create(blog);
+      displayNotification(
+        'success',
+        `a new blog "${returnedBlog.title}" by ${returnedBlog.author} added`,
+        3000,
+      );
+      setBlogs(blogs.concat(returnedBlog));
+      blogFormRef.current.toggleVisibility();
+    } catch (err) {
+      displayNotification(
+        'error',
+        'title or url are missing, or your session expired',
+        5000,
+      );
+      throw err;
+    }
   };
 
   const loginForm = () => (
@@ -70,7 +85,7 @@ const App = () => {
 
   const createBlogForm = () => (
     <Togglable buttonLabel='create new blog' ref={blogFormRef}>
-      <BlogForm addBlog={addBlog} displayNotification={displayNotification} />
+      <BlogForm addBlog={addBlog} />
     </Togglable>
   );
 
