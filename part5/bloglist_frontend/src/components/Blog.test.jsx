@@ -2,6 +2,14 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Blog from './Blog';
 
+vi.mock('../services/blogs', () => ({
+  default: {
+    update: vi.fn(),
+  },
+}));
+
+import blogService from '../services/blogs';
+
 describe('<Blog />', () => {
   const blog = {
     title: 'Component testing is done with react-testing-library',
@@ -68,5 +76,23 @@ describe('<Blog />', () => {
 
     expect(urlElement).toBeDefined();
     expect(likeButton).toBeDefined();
+  });
+
+  test('calls the function passed as props twice if the like button is clicked twice', async () => {
+    const user = userEvent.setup();
+    const button = screen.getByText('view');
+
+    await user.click(button);
+
+    const likeButton = screen.queryByText('like');
+
+    blogService.update.mockResolvedValue({
+      title: 'successfully clicked like',
+    });
+
+    await user.click(likeButton);
+    await user.click(likeButton);
+
+    expect(fetchallBlogsAndSort.mock.calls).toHaveLength(2);
   });
 });
