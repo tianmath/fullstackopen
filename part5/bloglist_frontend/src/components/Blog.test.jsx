@@ -2,14 +2,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Blog from './Blog';
 
-vi.mock('../services/blogs', () => ({
-  default: {
-    update: vi.fn(),
-  },
-}));
-
-import blogService from '../services/blogs';
-
 describe('<Blog />', () => {
   const blog = {
     title: 'Component testing is done with react-testing-library',
@@ -38,16 +30,10 @@ describe('<Blog />', () => {
     id: 'someUserId',
   };
 
-  const fetchallBlogsAndSort = vi.fn();
+  const likeBlog = vi.fn();
 
   beforeEach(() => {
-    render(
-      <Blog
-        blog={blog}
-        user={user}
-        fetchallBlogsAndSort={fetchallBlogsAndSort}
-      />,
-    );
+    render(<Blog blog={blog} user={user} onLike={likeBlog} />);
   });
 
   test('displays blog title and author, but does not display its URL or number of likes by default', () => {
@@ -86,13 +72,9 @@ describe('<Blog />', () => {
 
     const likeButton = screen.queryByText('like');
 
-    blogService.update.mockResolvedValue({
-      title: 'successfully clicked like',
-    });
-
     await user.click(likeButton);
     await user.click(likeButton);
 
-    expect(fetchallBlogsAndSort.mock.calls).toHaveLength(2);
+    expect(likeBlog.mock.calls).toHaveLength(2);
   });
 });

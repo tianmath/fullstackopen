@@ -76,6 +76,25 @@ const App = () => {
     }
   };
 
+  const likeBlog = async (blog) => {
+    await blogService.update(blog.id, {
+      likes: blog.likes + 1,
+    });
+    fetchallBlogsAndSort();
+  };
+
+  const removeBlog = async (blog) => {
+    if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
+      try {
+        await blogService.remove(blog.id);
+        await fetchallBlogsAndSort();
+        displayNotification('success', 'blog successfully remove', 3000);
+      } catch (error) {
+        displayNotification('error', error.response.data.error, 3000);
+      }
+    }
+  };
+
   const loginForm = () => (
     <LoginForm
       handleLogin={handleLogin}
@@ -116,8 +135,8 @@ const App = () => {
               key={blog.id}
               blog={blog}
               user={user}
-              fetchallBlogsAndSort={fetchallBlogsAndSort}
-              displayNotification={displayNotification}
+              onLike={likeBlog}
+              onRemove={removeBlog}
             />
           ))}
         </>
