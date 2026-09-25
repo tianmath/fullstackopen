@@ -47,5 +47,25 @@ describe('Note app', () => {
         page.getByText('a blog created using playwright').last(),
       ).toBeVisible();
     });
+
+    describe('and a blog exists', () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(
+          page,
+          'a blog created using playwright',
+          'playwright',
+          'http://example.com/blogage',
+        );
+      });
+
+      test('the blog can be liked', async ({ page }) => {
+        await page.getByRole('button', { name: 'view' }).click();
+        expect(page.getByRole('button', { name: 'like' })).toBeVisible();
+
+        const likeButton = page.getByRole('button', { name: 'like' });
+        await likeButton.click();
+        await expect(likeButton.locator('..')).toContainText('1');
+      });
+    });
   });
 });
