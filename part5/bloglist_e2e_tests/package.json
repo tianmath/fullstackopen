@@ -1,0 +1,17 @@
+{
+  "name": "bloglist_e2e_tests",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "author": "Mathieu",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.2"
+  }
+}
