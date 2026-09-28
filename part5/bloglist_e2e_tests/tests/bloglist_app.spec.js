@@ -1,5 +1,6 @@
 const { test, describe, expect, beforeEach } = require('@playwright/test');
 const {
+  severalBlogs,
   loginWith,
   createBlog,
   APILogWithUserAndCreateBlog,
@@ -116,6 +117,52 @@ describe('Note app', () => {
       await expect(
         blogGroup.getByText('button', { name: 'remove' }),
       ).not.toBeVisible();
+    });
+
+    test('blogs are arranged in descending order according to their likes even with several additional blogs', async ({
+      page,
+      request,
+    }) => {
+      await Promise.all(
+        severalBlogs.map((blog) =>
+          APILogWithUserAndCreateBlog(request, 'chewara', 'salainen', {
+            title: blog.title,
+            author: blog.author,
+            url: blog.url,
+            likes: blog.likes,
+          }),
+        ),
+      );
+
+      await page.reload();
+
+      await page.getByRole('button', { name: 'view' }).last().waitFor();
+      const currentViewButton = page
+        .getByRole('button', { name: 'view' })
+        .first();
+
+      await currentViewButton.click();
+      await currentViewButton.click();
+      await currentViewButton.click();
+      await currentViewButton.click();
+      await currentViewButton.click();
+      await currentViewButton.click();
+      await currentViewButton.click();
+      await currentViewButton.click();
+
+      await expect(page.getByRole('button', { name: 'hide' })).toHaveCount(8);
+
+      const likeDivs = await page
+        .getByRole('button', { name: 'like' })
+        .locator('..')
+        .all();
+
+      const likeTexts = await Promise.all(
+        likeDivs.map((likeDiv) => likeDiv.textContent()),
+      );
+
+      const allLikes = likeTexts.map((text) => parseInt(text));
+      expect(allLikes).toEqual(allLikes.toSorted((a, b) => b - a));
     });
   });
 });
