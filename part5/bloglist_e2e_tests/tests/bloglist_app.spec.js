@@ -82,6 +82,48 @@ describe('Note app', () => {
           page.getByText('a blog created using playwright').last(),
         ).not.toBeVisible();
       });
+
+      test("the blog's remove button can't be seen by the logged in user if he did not create the blog", async ({
+        page,
+        request,
+      }) => {
+        await request.post('/api/users', {
+          data: {
+            name: 'some temp user',
+            username: 'tempuser',
+            password: 'salainen',
+          },
+        });
+
+        const loginResponse = await request.post('/api/login', {
+          data: {
+            username: 'tempuser',
+            password: 'salainen',
+          },
+        });
+
+        const { token } = await loginResponse.json();
+
+        await request.post('/api/blogs', {
+          data: {
+            title: 'A test to delete',
+            url: 'deleteURL',
+            likes: 15,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        await page.reload();
+
+        await expect(page.getByText('A test to delete')).toBeVisible();
+        const elt = page.getByText('A test to delete');
+        await elt.getByRole('button', { name: 'view' }).click();
+        await expect(
+          elt.getByText('button', { name: 'remove' }),
+        ).not.toBeVisible();
+      });
     });
   });
 });
