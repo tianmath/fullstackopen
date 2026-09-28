@@ -66,6 +66,22 @@ describe('Note app', () => {
         await likeButton.click();
         await expect(likeButton.locator('..')).toContainText('1');
       });
+
+      test('the blog can be deleted by the logged in user if he created it', async ({
+        page,
+      }) => {
+        await page.getByRole('button', { name: 'view' }).click();
+        await expect(
+          page.getByRole('button', { name: 'remove' }),
+        ).toBeVisible();
+
+        page.on('dialog', (dialog) => dialog.accept());
+        await page.getByRole('button', { name: 'remove' }).click();
+
+        await expect(
+          page.getByText('a blog created using playwright').last(),
+        ).not.toBeVisible();
+      });
     });
   });
 });
