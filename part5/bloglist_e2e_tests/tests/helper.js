@@ -14,4 +14,27 @@ const createBlog = async (page, title, author, url) => {
   await page.getByRole('button', { name: 'create' }).click();
 };
 
-export { loginWith, createBlog };
+const APILogWithUserAndCreateBlog = async (
+  request,
+  username,
+  password,
+  blog,
+) => {
+  const loginResponse = await request.post('/api/login', {
+    data: {
+      username: username,
+      password: password,
+    },
+  });
+
+  const { token } = await loginResponse.json();
+
+  await request.post('/api/blogs', {
+    data: blog,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export { loginWith, createBlog, APILogWithUserAndCreateBlog };

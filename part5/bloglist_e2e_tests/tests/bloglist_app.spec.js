@@ -1,5 +1,9 @@
 const { test, describe, expect, beforeEach } = require('@playwright/test');
-const { loginWith, createBlog } = require('./helper');
+const {
+  loginWith,
+  createBlog,
+  APILogWithUserAndCreateBlog,
+} = require('./helper');
 
 describe('Note app', () => {
   beforeEach(async ({ page, request }) => {
@@ -8,6 +12,14 @@ describe('Note app', () => {
       data: {
         name: 'Na',
         username: 'chewara',
+        password: 'salainen',
+      },
+    });
+
+    await request.post('/api/users', {
+      data: {
+        name: 'Mr Peabody',
+        username: 'botista',
         password: 'salainen',
       },
     });
@@ -31,8 +43,24 @@ describe('Note app', () => {
     });
   });
 
-  describe('When logged in', () => {
-    beforeEach(async ({ page }) => {
+  describe('when logged in and some blogs already exist', () => {
+    beforeEach(async ({ page, request }) => {
+      await APILogWithUserAndCreateBlog(request, 'chewara', 'salainen', {
+        title: 'first blog',
+        author: 'someone',
+        likes: 1,
+        url: 'http://example.com/first-blog',
+      });
+
+      await APILogWithUserAndCreateBlog(request, 'botista', 'salainen', {
+        title: 'second blog',
+        author: 'another person',
+        likes: 2,
+        url: 'http://example.com/second-blog',
+      });
+
+      await page.reload();
+
       await loginWith(page, 'chewara', 'salainen');
     });
 
@@ -48,82 +76,46 @@ describe('Note app', () => {
       ).toBeVisible();
     });
 
-    describe('and a blog exists', () => {
-      beforeEach(async ({ page }) => {
-        await createBlog(
-          page,
-          'a blog created using playwright',
-          'playwright',
-          'http://example.com/blogage',
-        );
-      });
+    test('one can like a blog', async ({ page }) => {
+      const blog = page.getByText('second blog');
+      await expect(blog).toBeVisible();
 
-      test('the blog can be liked', async ({ page }) => {
-        await page.getByRole('button', { name: 'view' }).click();
-        expect(page.getByRole('button', { name: 'like' })).toBeVisible();
+      await blog.getByRole('button', { name: 'view' }).click();
 
-        const likeButton = page.getByRole('button', { name: 'like' });
-        await likeButton.click();
-        await expect(likeButton.locator('..')).toContainText('1');
-      });
+      const likeButton = blog
+        .locator('..')
+        .getByRole('button', { name: 'like' });
 
-      test('the blog can be deleted by the logged in user if he created it', async ({
-        page,
-      }) => {
-        await page.getByRole('button', { name: 'view' }).click();
-        await expect(
-          page.getByRole('button', { name: 'remove' }),
-        ).toBeVisible();
+      await expect(likeButton).toBeVisible();
+      await likeButton.click();
+      await expect(likeButton.locator('..')).toContainText('3');
+    });
 
-        page.on('dialog', (dialog) => dialog.accept());
-        await page.getByRole('button', { name: 'remove' }).click();
+    test('one can delete own blog', async ({ page }) => {
+      const blog = page.getByText('first blog');
+      await expect(blog).toBeVisible();
 
-        await expect(
-          page.getByText('a blog created using playwright').last(),
-        ).not.toBeVisible();
-      });
+      await blog.getByRole('button', { name: 'view' }).click();
 
-      test("the blog's remove button can't be seen by the logged in user if he did not create the blog", async ({
-        page,
-        request,
-      }) => {
-        await request.post('/api/users', {
-          data: {
-            name: 'some temp user',
-            username: 'tempuser',
-            password: 'salainen',
-          },
-        });
+      const removeButton = blog
+        .locator('..')
+        .getByRole('button', { name: 'remove' });
+      await expect(removeButton).toBeVisible();
+      page.on('dialog', (dialog) => dialog.accept());
+      await removeButton.click();
 
-        const loginResponse = await request.post('/api/login', {
-          data: {
-            username: 'tempuser',
-            password: 'salainen',
-          },
-        });
+      await expect(page.getByText('first blog')).not.toBeVisible();
+    });
 
-        const { token } = await loginResponse.json();
-
-        await request.post('/api/blogs', {
-          data: {
-            title: 'A test to delete',
-            url: 'deleteURL',
-            likes: 15,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        await page.reload();
-
-        await expect(page.getByText('A test to delete')).toBeVisible();
-        const elt = page.getByText('A test to delete');
-        await elt.getByRole('button', { name: 'view' }).click();
-        await expect(
-          elt.getByText('button', { name: 'remove' }),
-        ).not.toBeVisible();
-      });
+    test("one can't see the remove button on someone else's blog", async ({
+      page,
+    }) => {
+      const blogGroup = page.getByText('second blog').locator('..');
+      await expect(blogGroup).toBeVisible();
+      await blogGroup.getByRole('button', { name: 'view' }).click();
+      await expect(
+        blogGroup.getByText('button', { name: 'remove' }),
+      ).not.toBeVisible();
     });
   });
 });
