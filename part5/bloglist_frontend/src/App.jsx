@@ -5,6 +5,7 @@ import blogService from './services/blogs';
 import LoginView from './components/LoginView';
 import BloglistView from './components/BloglistView';
 import Blog from './components/Blog';
+import BlogForm from './components/BlogForm';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -58,7 +59,6 @@ const App = () => {
     navigate('/');
   };
 
-  /*
   const addBlog = async (blog) => {
     try {
       const returnedBlog = await blogService.create(blog);
@@ -68,7 +68,6 @@ const App = () => {
         3000,
       );
       setBlogs(blogs.concat(returnedBlog));
-      blogFormRef.current.toggleVisibility();
     } catch (err) {
       displayNotification(
         'error',
@@ -78,7 +77,6 @@ const App = () => {
       throw err;
     }
   };
-  */
 
   const likeBlog = async (blog) => {
     await blogService.update(blog.id, {
@@ -118,7 +116,12 @@ const App = () => {
             login
           </Link>
         ) : (
-          <button onClick={handleLogout}>logout</button>
+          <>
+            <Link style={padding} to={'/create'}>
+              new blog
+            </Link>
+            <button onClick={handleLogout}>logout</button>
+          </>
         )}
       </div>
 
@@ -145,6 +148,10 @@ const App = () => {
               onRemove={removeBlog}
             />
           }
+        />
+        <Route
+          path='/create'
+          element={<BlogForm addBlog={addBlog} message={message} />}
         />
         <Route
           path='/login'

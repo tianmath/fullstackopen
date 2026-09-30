@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Notification from './Notification';
 
-const BlogForm = ({ addBlog }) => {
+const BlogForm = ({ addBlog, message }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,14 +19,15 @@ const BlogForm = ({ addBlog }) => {
 
     await addBlog(newBlog);
 
-    setTitle('');
-    setAuthor('');
-    setUrl('');
+    navigate('/');
   };
 
   return (
     <>
       <h2>create new</h2>
+
+      <Notification message={message} />
+
       <form onSubmit={handleSubmit}>
         <div>
           <label>
