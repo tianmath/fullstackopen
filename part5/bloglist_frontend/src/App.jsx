@@ -89,8 +89,9 @@ const App = () => {
     if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
       try {
         await blogService.remove(blog.id);
-        await fetchallBlogsAndSort();
+        setBlogs(blogs.filter((b) => b.id !== blog.id));
         displayNotification('success', 'blog successfully remove', 3000);
+        navigate('/');
       } catch (error) {
         displayNotification('error', error.response.data.error, 3000);
       }
