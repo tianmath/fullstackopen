@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import Notification from './Notification';
 
-const BlogForm = ({ addBlog, message }) => {
+const BlogForm = ({ user, addBlog, message }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
@@ -21,6 +21,8 @@ const BlogForm = ({ addBlog, message }) => {
 
     navigate('/');
   };
+
+  if (!user) return <Navigate to='/login' replace />;
 
   return (
     <>

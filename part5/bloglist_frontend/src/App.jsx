@@ -151,7 +151,7 @@ const App = () => {
         />
         <Route
           path='/create'
-          element={<BlogForm addBlog={addBlog} message={message} />}
+          element={<BlogForm user={user} addBlog={addBlog} message={message} />}
         />
         <Route
           path='/login'
