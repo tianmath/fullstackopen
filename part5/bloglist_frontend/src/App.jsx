@@ -7,19 +7,21 @@ import BloglistView from './components/BloglistView';
 import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
 
+const descendingBlogsSort = (blog1, blog2) => blog2.likes - blog1.likes;
+
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [message, setMessage] = useState(null);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  const fetchallBlogsAndSort = async () => {
-    const blogs = await blogService.getAll();
-    setBlogs(blogs.toSorted((blog1, blog2) => blog2.likes - blog1.likes));
-  };
-
   useEffect(() => {
-    (async () => await fetchallBlogsAndSort())();
+    const fetchallBlogsAndSort = async () => {
+      const fetcheblogs = await blogService.getAll();
+      setBlogs(fetcheblogs.toSorted(descendingBlogsSort));
+      return;
+    };
+    fetchallBlogsAndSort();
   }, []);
 
   useEffect(() => {
@@ -82,7 +84,12 @@ const App = () => {
     await blogService.update(blog.id, {
       likes: blog.likes + 1,
     });
-    fetchallBlogsAndSort();
+
+    setBlogs((blogs) =>
+      blogs
+        .map((b) => (b.id !== blog.id ? b : { ...blog, likes: blog.likes + 1 }))
+        .toSorted(descendingBlogsSort),
+    );
   };
 
   const removeBlog = async (blog) => {
@@ -129,15 +136,7 @@ const App = () => {
       <Routes>
         <Route
           path='/'
-          element={
-            <BloglistView
-              blogs={blogs}
-              user={user}
-              message={message}
-              likeBlog={likeBlog}
-              removeBlog={removeBlog}
-            />
-          }
+          element={<BloglistView blogs={blogs} message={message} />}
         />
         <Route
           path='/blogs/:id'

@@ -14,7 +14,7 @@ const Blog = ({ blog, user, onLike, onRemove }) => {
       </div>
       <div>
         likes {blog.likes}
-        {user && <button onClick={async () => await onLike(blog)}>like</button>}
+        {user && <button onClick={() => onLike(blog)}>like</button>}
       </div>
       <div>Added by {blog.user.name}</div>
       {user && blog.user.username === user.username && (
