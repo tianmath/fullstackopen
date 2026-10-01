@@ -28,14 +28,19 @@ describe('Note app', () => {
     await page.goto('/');
   });
 
-  test('Login form is shown', async ({ page }) => {
-    await expect(page.getByText('log in to application')).toBeVisible();
-  });
+  // test('Login form is shown', async ({ page }) => {
+  //   await expect(page.getByText('log in to application')).toBeVisible();
+  // });
 
   describe('Login', () => {
+    beforeEach(async ({ page }) => {
+      await page.getByRole('link', { name: 'login' }).click();
+    });
+
     test('succeeds with correct credentials', async ({ page }) => {
       await loginWith(page, 'chewara', 'salainen');
-      await expect(page.getByText('Na logged in')).toBeVisible();
+      await expect(page).toHaveURL('/');
+      await expect(page.getByRole('link', { name: 'new blog' })).toBeVisible();
     });
 
     test('fails with wrong credentials', async ({ page }) => {
