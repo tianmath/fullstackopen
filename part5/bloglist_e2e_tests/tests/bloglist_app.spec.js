@@ -45,7 +45,10 @@ describe('Note app', () => {
 
     test('fails with wrong credentials', async ({ page }) => {
       await loginWith(page, 'chewara', 'wrong');
-      await expect(page.getByText('Na logged in')).not.toBeVisible();
+      await expect(page).toHaveURL('/login');
+      await expect(
+        page.getByRole('link', { name: 'new blog' }),
+      ).not.toBeVisible();
     });
   });
 
