@@ -96,18 +96,13 @@ describe('Note app', () => {
     });
 
     test('one can delete own blog', async ({ page }) => {
-      const blog = page.getByText('first blog');
-      await expect(blog).toBeVisible();
+      await page.getByRole('link', { name: 'first blog' }).click();
 
-      await blog.getByRole('button', { name: 'view' }).click();
-
-      const removeButton = blog
-        .locator('..')
-        .getByRole('button', { name: 'remove' });
-      await expect(removeButton).toBeVisible();
+      const removeButton = page.getByRole('button', { name: 'remove' });
       page.on('dialog', (dialog) => dialog.accept());
       await removeButton.click();
 
+      await expect(page).toHaveURL('/');
       await expect(page.getByText('first blog')).not.toBeVisible();
     });
 
