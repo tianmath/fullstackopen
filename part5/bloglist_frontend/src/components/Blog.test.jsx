@@ -95,6 +95,28 @@ describe('<Blog />', () => {
       expect(removeButton).toBeNull();
     });
 
+    test('even if NOT blog owner clicking the like button twice calls the function passed as onLike prop twice', async () => {
+      render(
+        <MemoryRouter>
+          <Blog
+            blog={blog}
+            user={user2}
+            onLike={likeBlog}
+            removeBlog={removeBlog}
+          />
+        </MemoryRouter>,
+      );
+
+      const user = userEvent.setup();
+
+      const likeButton = screen.getByText('like');
+
+      await user.click(likeButton);
+      await user.click(likeButton);
+
+      expect(likeBlog.mock.calls).toHaveLength(2);
+    });
+
     test('if blog owner then both the like button and the remove button are displayed', async () => {
       render(
         <MemoryRouter>
@@ -113,19 +135,5 @@ describe('<Blog />', () => {
       const removeButton = screen.queryByText('remove');
       expect(removeButton).toBeDefined();
     });
-  });
-
-  test('calls the function passed as props twice if the like button is clicked twice', async () => {
-    const user = userEvent.setup();
-    const button = screen.getByText('view');
-
-    await user.click(button);
-
-    const likeButton = screen.queryByText('like');
-
-    await user.click(likeButton);
-    await user.click(likeButton);
-
-    expect(likeBlog.mock.calls).toHaveLength(2);
   });
 });
