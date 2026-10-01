@@ -17,7 +17,7 @@ describe('<Blog />', () => {
     id: 'someBlogId',
   };
 
-  const user = {
+  const user1 = {
     username: 'user1',
     name: 'fullname_user1',
     blogs: [
@@ -29,6 +29,13 @@ describe('<Blog />', () => {
       },
     ],
     id: 'someUserId',
+  };
+
+  const user2 = {
+    username: 'user2',
+    name: 'fullname_user2',
+    blogs: [],
+    id: 'someUserId2',
   };
 
   const likeBlog = vi.fn();
@@ -64,6 +71,27 @@ describe('<Blog />', () => {
       expect(ownerElement).toBeDefined();
       expect(likesElement).toBeDefined();
       expect(likeButton).toBeNull();
+      expect(removeButton).toBeNull();
+    });
+  });
+
+  describe('when user is authenticated', () => {
+    test('if NOT blog owner then the like button is displayed but the remove button is not', async () => {
+      render(
+        <MemoryRouter>
+          <Blog
+            blog={blog}
+            user={user2}
+            onLike={likeBlog}
+            removeBlog={removeBlog}
+          />
+        </MemoryRouter>,
+      );
+
+      const likeButton = screen.getByText('like');
+      expect(likeButton).toBeDefined();
+
+      const removeButton = screen.queryByText('remove');
       expect(removeButton).toBeNull();
     });
   });
