@@ -87,16 +87,10 @@ describe('Note app', () => {
     });
 
     test('one can like a blog', async ({ page }) => {
-      const blog = page.getByText('second blog');
-      await expect(blog).toBeVisible();
+      await page.getByRole('link', { name: 'second blog' }).click();
+      await expect(page).toHaveURL(/\/blogs\/[a-zA-Z0-9]+/);
 
-      await blog.getByRole('button', { name: 'view' }).click();
-
-      const likeButton = blog
-        .locator('..')
-        .getByRole('button', { name: 'like' });
-
-      await expect(likeButton).toBeVisible();
+      const likeButton = page.getByRole('button', { name: 'like' });
       await likeButton.click();
       await expect(likeButton.locator('..')).toContainText('3');
     });
