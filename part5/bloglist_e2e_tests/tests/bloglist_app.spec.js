@@ -69,7 +69,7 @@ describe('Note app', () => {
       });
 
       await page.reload();
-
+      await page.getByRole('link', { name: 'login' }).click();
       await loginWith(page, 'chewara', 'salainen');
     });
 
@@ -80,6 +80,7 @@ describe('Note app', () => {
         'playwright',
         'http://example.com/blogage',
       );
+      await expect(page).toHaveURL('/');
       await expect(
         page.getByText('a blog created using playwright').last(),
       ).toBeVisible();
