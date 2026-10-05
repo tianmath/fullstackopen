@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom';
+import { Routes, Route, useNavigate, useMatch } from 'react-router-dom';
 import { Container } from '@mui/material';
 
 import blogService from './services/blogs';
@@ -7,6 +7,7 @@ import LoginView from './components/LoginView';
 import BloglistView from './components/BloglistView';
 import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
+import Menu from './components/Menu';
 
 const descendingBlogsSort = (blog1, blog2) => blog2.likes - blog1.likes;
 
@@ -106,33 +107,12 @@ const App = () => {
     }
   };
 
-  const padding = {
-    padding: 5,
-  };
-
   const match = useMatch('/blogs/:id');
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   return (
     <Container>
-      <div>
-        <Link style={padding} to='/'>
-          blogs
-        </Link>
-
-        {!user ? (
-          <Link style={padding} to='/login'>
-            login
-          </Link>
-        ) : (
-          <>
-            <Link style={padding} to={'/create'}>
-              new blog
-            </Link>
-            <button onClick={handleLogout}>logout</button>
-          </>
-        )}
-      </div>
+      <Menu user={user} handleLogout={handleLogout} />
 
       <Routes>
         <Route
