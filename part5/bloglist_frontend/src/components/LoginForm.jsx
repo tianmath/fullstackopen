@@ -1,26 +1,19 @@
 import { useState } from 'react';
-import loginService from '../services/login';
 import { Button, TextField } from '@mui/material';
 
-const LoginForm = ({ handleLogin, displayNotification }) => {
+const LoginForm = ({ handleLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const user = await loginService.login({ username, password });
-      handleLogin(user);
-      setUsername('');
-      setPassword('');
-    } catch {
-      displayNotification('error', 'wrong username or password', 3000);
-    }
+    handleLogin(username, password);
   };
 
   return (
     <div>
+      <h2>Log in to application</h2>
+
       <form onSubmit={handleSubmit}>
         <div>
           <TextField

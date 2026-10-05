@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useMatch } from 'react-router-dom';
 import { Container } from '@mui/material';
 
+import loginService from './services/login';
 import blogService from './services/blogs';
-import LoginView from './components/LoginView';
+import LoginForm from './components/LoginForm';
 import BloglistView from './components/BloglistView';
 import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
@@ -50,11 +51,19 @@ const App = () => {
     }, duration);
   };
 
-  const handleLogin = (user) => {
-    window.localStorage.setItem('loggedBloglistAppUser', JSON.stringify(user));
-    blogService.setToken(user.token);
-    setUser(user);
-    navigate('/');
+  const handleLogin = async (username, password) => {
+    try {
+      const user = await loginService.login({ username, password });
+      window.localStorage.setItem(
+        'loggedBloglistAppUser',
+        JSON.stringify(user),
+      );
+      blogService.setToken(user.token);
+      setUser(user);
+      navigate('/');
+    } catch {
+      displayNotification('error', 'wrong username or password', 3000);
+    }
   };
 
   const handleLogout = () => {
@@ -136,12 +145,7 @@ const App = () => {
         />
         <Route
           path='/login'
-          element={
-            <LoginView
-              handleLogin={handleLogin}
-              displayNotification={displayNotification}
-            />
-          }
+          element={<LoginForm handleLogin={handleLogin} />}
         />
       </Routes>
     </Container>
