@@ -8,13 +8,14 @@ import BloglistView from './components/BloglistView';
 import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
 import Menu from './components/Menu';
+import Notification from './components/Notification';
 
 const descendingBlogsSort = (blog1, blog2) => blog2.likes - blog1.likes;
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [message, setMessage] = useState(null);
   const [user, setUser] = useState(null);
+  const [notification, setNotification] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,12 +41,12 @@ const App = () => {
   }, []);
 
   const displayNotification = (type, message, duration) => {
-    setMessage({
+    setNotification({
       type: type,
       text: message,
     });
     setTimeout(() => {
-      setMessage(null);
+      setNotification(null);
     }, duration);
   };
 
@@ -114,11 +115,10 @@ const App = () => {
     <Container>
       <Menu user={user} handleLogout={handleLogout} />
 
+      <Notification notification={notification} />
+
       <Routes>
-        <Route
-          path='/'
-          element={<BloglistView blogs={blogs} message={message} />}
-        />
+        <Route path='/' element={<BloglistView blogs={blogs} />} />
         <Route
           path='/blogs/:id'
           element={
@@ -132,13 +132,12 @@ const App = () => {
         />
         <Route
           path='/create'
-          element={<BlogForm user={user} addBlog={addBlog} message={message} />}
+          element={<BlogForm user={user} addBlog={addBlog} />}
         />
         <Route
           path='/login'
           element={
             <LoginView
-              message={message}
               handleLogin={handleLogin}
               displayNotification={displayNotification}
             />

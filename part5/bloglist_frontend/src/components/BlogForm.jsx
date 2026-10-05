@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { Button, TextField } from '@mui/material';
-import Notification from './Notification';
 
-const BlogForm = ({ user, addBlog, message }) => {
+const BlogForm = ({ user, addBlog }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
@@ -28,8 +27,6 @@ const BlogForm = ({ user, addBlog, message }) => {
   return (
     <>
       <h2>create new</h2>
-
-      <Notification message={message} />
 
       <form onSubmit={handleSubmit}>
         <div>

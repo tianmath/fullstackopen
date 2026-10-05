@@ -1,12 +1,9 @@
 import { Link } from 'react-router-dom';
-import Notification from './Notification';
 
-const BloglistView = ({ blogs, message }) => {
+const BloglistView = ({ blogs }) => {
   return (
     <div>
       <h2>blogs</h2>
-
-      <Notification message={message} />
 
       <ul>
         {blogs.map((blog) => (
