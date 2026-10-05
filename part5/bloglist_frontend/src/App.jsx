@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom';
+import { Container } from '@mui/material';
 
 import blogService from './services/blogs';
 import LoginView from './components/LoginView';
@@ -113,7 +114,7 @@ const App = () => {
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   return (
-    <div>
+    <Container>
       <div>
         <Link style={padding} to='/'>
           blogs
@@ -164,7 +165,7 @@ const App = () => {
           }
         />
       </Routes>
-    </div>
+    </Container>
   );
 };
 

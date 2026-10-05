@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import loginService from '../services/login';
+import { Button, TextField } from '@mui/material';
 
 const LoginForm = ({ handleLogin, displayNotification }) => {
   const [username, setUsername] = useState('');
@@ -22,26 +23,28 @@ const LoginForm = ({ handleLogin, displayNotification }) => {
     <div>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>
-            username
-            <input
-              type='text'
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </label>
+          <TextField
+            label='username'
+            type='text'
+            variant='standard'
+            margin='dense'
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
         </div>
         <div>
-          <label>
-            password
-            <input
-              type='password'
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </label>
+          <TextField
+            label='password'
+            type='password'
+            variant='standard'
+            margin='dense'
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
         </div>
-        <button type='submit'>login</button>
+        <Button variant='contained' sx={{ marginTop: 1 }} type='submit'>
+          login
+        </Button>
       </form>
     </div>
   );

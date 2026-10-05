@@ -4,7 +4,7 @@ import LoginForm from './LoginForm';
 const LoginPage = ({ message, handleLogin, displayNotification }) => {
   return (
     <div>
-      <h2>log in to application</h2>
+      <h2>Log in to application</h2>
 
       <Notification message={message} />
 
