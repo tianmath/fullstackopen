@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button, TextField } from '@mui/material';
 
 const BlogForm = ({ addBlog }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     const newBlog = {
@@ -17,9 +15,7 @@ const BlogForm = ({ addBlog }) => {
       url,
     };
 
-    await addBlog(newBlog);
-
-    navigate('/');
+    addBlog(newBlog);
   };
 
   return (

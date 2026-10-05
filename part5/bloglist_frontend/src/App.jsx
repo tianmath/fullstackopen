@@ -82,6 +82,7 @@ const App = () => {
         3000,
       );
       setBlogs(blogs.concat(returnedBlog));
+      navigate('/');
     } catch (err) {
       displayNotification(
         'error',
