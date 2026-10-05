@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, TextField } from '@mui/material';
 
-const BlogForm = ({ user, addBlog }) => {
+const BlogForm = ({ addBlog }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
@@ -21,8 +21,6 @@ const BlogForm = ({ user, addBlog }) => {
 
     navigate('/');
   };
-
-  if (!user) return <Navigate to='/login' replace />;
 
   return (
     <>

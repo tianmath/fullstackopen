@@ -141,7 +141,7 @@ const App = () => {
         />
         <Route
           path='/create'
-          element={<BlogForm user={user} addBlog={addBlog} />}
+          element={user && <BlogForm addBlog={addBlog} />}
         />
         <Route
           path='/login'
