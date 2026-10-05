@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
+import { Button, TextField } from '@mui/material';
 import Notification from './Notification';
 
 const BlogForm = ({ user, addBlog, message }) => {
@@ -32,26 +33,37 @@ const BlogForm = ({ user, addBlog, message }) => {
 
       <form onSubmit={handleSubmit}>
         <div>
-          <label>
-            title:
-            <input value={title} onChange={(e) => setTitle(e.target.value)} />
-          </label>
+          <TextField
+            label='title'
+            margin='dense'
+            sx={{ width: '50%' }}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
 
         <div>
-          <label>
-            author:
-            <input value={author} onChange={(e) => setAuthor(e.target.value)} />
-          </label>
+          <TextField
+            label='author'
+            margin='dense'
+            sx={{ width: '50%' }}
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+          />
         </div>
 
         <div>
-          <label>
-            url:
-            <input value={url} onChange={(e) => setUrl(e.target.value)} />
-          </label>
+          <TextField
+            label='url'
+            margin='dense'
+            sx={{ width: '50%' }}
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
         </div>
-        <button type='submit'>create</button>
+        <Button variant='contained' sx={{ marginTop: 1 }} type='submit'>
+          create
+        </Button>
       </form>
     </>
   );
